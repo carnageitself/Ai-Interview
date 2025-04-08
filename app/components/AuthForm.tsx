@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
+import { Button } from '@/app/components/ui/button';
+import { Form } from '@/app/components/ui/form';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import FormFields from './FormFields';
