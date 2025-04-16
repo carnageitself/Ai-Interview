@@ -22,9 +22,15 @@ export async function signUp(params: SignUpParams) {
       name,
       email,
     });
+
+    return {
+      success: true,
+      message: 'Account created successfully. Please sign in.',
+    };
   } catch (e: any) {
     console.error('Error creating a user', e);
 
+    // Provide specific error handling for known scenarios
     if (e.code === 'auth/email-already-exists') {
       return {
         success: false,
@@ -34,7 +40,7 @@ export async function signUp(params: SignUpParams) {
 
     return {
       success: false,
-      message: 'Failed to create an account',
+      message: 'Failed to create an account. Please try again.',
     };
   }
 }
