@@ -4,11 +4,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/app/components/ui/form';
+} from '@/components/ui/form';
 
-import { Input } from '@/app/components/ui/input';
+import { Input } from '@/components/ui/input';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
-import { fields } from './../../node_modules/@hookform/resolvers/ajv/src/__tests__/__fixtures__/data';
 
 interface FormFieldProps<T extends FieldValues> {
   control: Control<T>;

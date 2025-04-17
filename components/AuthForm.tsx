@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import Link from 'next/link';
 
-import { Button } from '@/app/components/ui/button';
-import { Form } from '@/app/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import FormFields from './FormFields';
@@ -46,7 +46,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      if (type == 'sign-up') {
+      if (type === 'sign-up') {
         const { name, email, password } = values;
 
         const userCredentials = await createUserWithEmailAndPassword(
@@ -64,22 +64,24 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
         if (!result?.success) {
           toast.error(result?.message);
+          return;
         }
 
-        toast.success('Account created successfully, Please sign in');
+        toast.success('Account created successfully. Please sign in.');
         router.push('/sign-in');
       } else {
         const { email, password } = values;
-        const userCredentials = await signInWithEmailAndPassword(
+
+        const userCredential = await signInWithEmailAndPassword(
           auth,
           email,
           password
         );
 
-        const idToken = await userCredentials.user.getIdToken();
+        const idToken = await userCredential.user.getIdToken();
 
         if (!idToken) {
-          toast.error('sign in failed');
+          toast.error('Sign in failed');
           return;
         }
 
@@ -88,7 +90,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
           idToken,
         });
 
-        toast.success('Sign In Sucesssully');
+        toast.success('Sign in successfully.');
         router.push('/');
       }
     } catch (error) {
