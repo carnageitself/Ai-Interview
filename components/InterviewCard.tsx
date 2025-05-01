@@ -14,7 +14,6 @@ const InterviewCard = async ({
   techstack,
   createdAt,
 }: InterviewCardProps) => {
-  console.log('user', userId);
   const feedback =
     userId && interviewId
       ? await getFeedbackByInterviewId({
@@ -22,13 +21,25 @@ const InterviewCard = async ({
           userId,
         })
       : null;
+  // let feedback = null;
+  // if (userId && interviewId) {
+  //   try {
+  //     feedback = await getFeedbackByInterviewId({
+  //       interviewId,
+  //       userId,
+  //     });
+  //     // console.log('Feedback:', feedback);
+  //   } catch (error) {
+  //     console.error('Error fetching feedback:', error); // Log the error
+  //   }
+  // } else {
+  //   console.log('Missing userId or interviewId.');
+  // }
 
   const noramlizedType = /mix/gi.test(type) ? 'Mixed' : type;
   const formattedDate = dayjs(
     feedback?.createdAt || createdAt || Date.now()
   ).format('D MMM, YYYY');
-
-  console.log('score', feedback);
 
   return (
     <div className="card-border w-[360px] max-sm:w-full min-h-96">

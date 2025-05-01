@@ -67,7 +67,7 @@ export async function createFeedback(params: CreateFeedbackParams) {
 
 export async function getInterviewById(id: string): Promise<Interview | null> {
   const interview = await db.collection('interviews').doc(id).get();
-  console.log('inter2', interview);
+  // console.log('inter2', interview);
   return interview.data() as Interview | null;
 }
 
@@ -79,10 +79,14 @@ export async function getFeedbackByInterviewId(
   const feedback = await db
     .collection('feedback')
     .where('interviewId', '==', interviewId)
-    .where('userId', '==', userId)
+    // .where('userId', '==', userId)
     .limit(1)
     .get();
-  if (feedback.empty) return null;
+
+  if (feedback.empty) {
+    console.log('No matching feedback found.');
+    return null;
+  }
 
   const feedbackDoc = feedback.docs[0];
 
