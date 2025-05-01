@@ -25,7 +25,7 @@ const Page = async () => {
   // ! this method is in efficient and makes call one by one but we need to make the call parlelly, so we use promise.all
   // const userInterviews = await getInterveiwsByUserId(user?.id!);
   // const getLatestInterviews = await getLatestInterviews({user?.id!});
-
+  console.log('userInterviews', userInterviews[0].id);
   const hasPastInterviews = userInterviews?.length > 0;
   const hasUpcomingInterviews = latestInterviews?.length > 0;
 
@@ -55,7 +55,11 @@ const Page = async () => {
         <div className="interviews-section">
           {hasPastInterviews ? (
             userInterviews.map((interview) => (
-              <InterviewCard {...interview} key={interview.id} />
+              <InterviewCard
+                interviewId={interview.id}
+                {...interview}
+                key={interview.id}
+              />
             ))
           ) : (
             <p>You havn&apos;t taken any interviews yet</p>
@@ -67,7 +71,11 @@ const Page = async () => {
         <div className="interviews-section">
           {hasUpcomingInterviews ? (
             latestInterviews.map((interview) => (
-              <InterviewCard {...interview} key={interview.id} />
+              <InterviewCard
+                interviewId={interview.id}
+                {...interview}
+                key={interview.id}
+              />
             ))
           ) : (
             <p>There are no new interviews available</p>

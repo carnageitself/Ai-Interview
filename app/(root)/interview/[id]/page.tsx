@@ -1,7 +1,10 @@
 import Agent from '@/components/Agent';
 import DisplayTechIcons from '@/components/DisplayTechIcons';
 import { getCurrentUser } from '@/lib/actions/auth.action';
-import { getInterviewById } from '@/lib/actions/general.action';
+import {
+  getFeedbackByInterviewId,
+  getInterviewById,
+} from '@/lib/actions/general.action';
 import { getRandomInterviewCover } from '@/lib/utils';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
@@ -13,6 +16,11 @@ const page = async ({ params }: RouteParams) => {
   const interview = await getInterviewById(id);
 
   if (!interview) redirect('/');
+
+  const feedback = await getFeedbackByInterviewId({
+    interviewId: id,
+    userId: user?.id!,
+  });
   return (
     <>
       <div className="flex flex-row gap-4 justify-between">
@@ -39,6 +47,7 @@ const page = async ({ params }: RouteParams) => {
         interviewId={id}
         type="interview"
         questions={interview.questions}
+        feedbackId={feedback?.id}
       />
     </>
   );
