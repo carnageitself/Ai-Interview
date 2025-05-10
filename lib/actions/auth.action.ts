@@ -30,7 +30,6 @@ export async function signUp(params: SignUpParams) {
   } catch (e: any) {
     console.error('Error creating a user', e);
 
-    // Provide specific error handling for known scenarios
     if (e.code === 'auth/email-already-exists') {
       return {
         success: false,
@@ -58,9 +57,16 @@ export async function signIn(params: SignInParams) {
       };
     }
 
-    await setSessionCookie(idToken);
+    const sessionCookie = await auth.createSessionCookie(idToken, {
+      expiresIn: ONE_WEEK * 1000,
+    });
+
+    return {
+      success: true,
+      sessionCookie,
+    };
   } catch (e) {
-    console.log(e);
+    console.error('SignIn Error', e);
 
     return {
       success: false,
@@ -69,25 +75,8 @@ export async function signIn(params: SignInParams) {
   }
 }
 
-export async function setSessionCookie(idToken: string) {
-  const cookieStore = await cookies();
-
-  const sessionCookie = await auth.createSessionCookie(idToken, {
-    expiresIn: ONE_WEEK * 1000,
-  });
-
-  cookieStore.set('session', sessionCookie, {
-    maxAge: ONE_WEEK,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    sameSite: 'lax',
-  });
-}
-
 export async function getCurrentUser(): Promise<User | null> {
   const cookieStore = await cookies();
-
   const sessionCookie = cookieStore.get('session')?.value;
 
   if (!sessionCookie) return null;
@@ -100,22 +89,19 @@ export async function getCurrentUser(): Promise<User | null> {
       .doc(decodedClaims.uid)
       .get();
 
-    if (!userRecord) return null;
+    if (!userRecord.exists) return null;
 
     return {
       ...userRecord.data(),
       id: userRecord.id,
     } as User;
-  } catch (error) {
-    console.log(error);
-
+  } catch (error: any) {
+    console.error('Session verification failed:', error);
     return null;
   }
 }
 
 export async function isAuthenticated() {
   const user = await getCurrentUser();
-
   return !!user;
-  //!! to convert a truthy or falsy value to a boolean value
 }

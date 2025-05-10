@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import Link from 'next/link';
-
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import Image from 'next/image';
@@ -18,10 +17,6 @@ import {
 import { auth } from '@/firebase/client';
 import { signIn, signUp } from '@/lib/actions/auth.action';
 
-// const formSchema = z.object({
-//   username: z.string().min(2).max(50),
-// });
-
 const AuthFormSchema = (type: FormType) => {
   return z.object({
     name: type === 'sign-up' ? z.string().min(3) : z.string().optional(),
@@ -34,7 +29,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
   const router = useRouter();
 
   const formSchema = AuthFormSchema(type);
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -85,17 +79,27 @@ const AuthForm = ({ type }: { type: FormType }) => {
           return;
         }
 
-        await signIn({
+        const result = await signIn({
           email,
           idToken,
         });
 
-        toast.success('Sign in successfully.');
+        if (!result?.success || !result.sessionCookie) {
+          toast.error(result?.message || 'Sign in failed');
+          return;
+        }
+
+        // ✅ Set session cookie manually on client
+        document.cookie = `session=${result.sessionCookie}; max-age=${
+          60 * 60 * 24 * 7
+        }; path=/; secure; samesite=lax`;
+
+        toast.success('Signed in successfully.');
         router.push('/');
       }
     } catch (error) {
-      console.log(error);
-      toast.error(`There was an error: ${error}`);
+      console.error(error);
+      toast.error(`There was an error: ${String(error)}`);
     }
   }
 
@@ -145,7 +149,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
         </Form>
         <p className="text-center">
           {isSignIn ? 'No Account Yet' : 'Have an account already?'}
-
           <Link
             href={!isSignIn ? '/sign-in' : '/sign-up'}
             className="font-bold text-user-primary ml-1"
