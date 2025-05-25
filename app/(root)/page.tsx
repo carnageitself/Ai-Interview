@@ -12,7 +12,6 @@ import React from 'react';
 const Page = async () => {
   const user = await getCurrentUser();
 
-  // console.log('user', user?.id);
   if (user?.id === undefined) {
     throw new Error('User ID is undefined');
   }
@@ -22,10 +21,6 @@ const Page = async () => {
     await getLatestInterviews({ userId: user?.id }),
   ]);
 
-  // ! this method is in efficient and makes call one by one but we need to make the call parlelly, so we use promise.all
-  // const userInterviews = await getInterveiwsByUserId(user?.id!);
-  // const getLatestInterviews = await getLatestInterviews({user?.id!});
-  // console.log('userInterviews', userInterviews[0].id);
   const hasPastInterviews = userInterviews?.length > 0;
   const hasUpcomingInterviews = latestInterviews?.length > 0;
 
